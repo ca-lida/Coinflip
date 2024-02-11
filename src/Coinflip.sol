@@ -11,6 +11,7 @@ error SeedTooShort();
 contract Coinflip is Ownable{
     
     string public seed;
+    event GuessesAndFlips(uint8[10] Guesses, uint8[10] actual_flips);
 
     constructor() Ownable(msg.sender) {
         // TODO: set the seed to "It is a good practice to rotate seeds often in gambling".
@@ -23,13 +24,15 @@ contract Coinflip is Ownable{
     function userInput(uint8[10] calldata Guesses) external view returns(bool){
         // TODO: Get the contract generated flips by calling the helper function getFlips()
         uint8[10] memory actual_flips = getFlips();
+        // emit GuessesAndFlips(Guesses, actual_flips); uncomment and remove view from function to debug
+
         // TODO: Compare each element of the user's guesses with the generated guesses. Return true ONLY if all guesses match
         for (uint i = 0; i < 10; i++){
             if (Guesses[i] != actual_flips[i]) {
                 return false;
             }
-        return true;
         }
+        return true;
     }
 
 
@@ -53,8 +56,8 @@ contract Coinflip is Ownable{
     /// @return a fixed 10 element array of type uint8 with only 1 or 0 as its elements
     function getFlips() public view returns(uint8[10] memory){
         // TODO: Cast the seed into a bytes array and get its length
-        bytes memory seedInBytes = bytes(seed);
-        uint seedlength = seedInBytes.length;
+        bytes memory stringInBytes = bytes(seed);
+        uint seedlength = stringInBytes.length;
         // TODO: Initialize an empty fixed array with 10 uint8 elements
         uint8[10] memory flips;
         // Setting the interval for grabbing characters
@@ -62,9 +65,7 @@ contract Coinflip is Ownable{
         // TODO: Input the correct form for the for loop
         for (uint i=0; i<10; i++){
             // Generating a pseudo-random number by hashing together the character and the block timestamp
-            // encode and encode packed generate 2 different hashes, one causes usercorrect to fail, the other causes userincorrect to fail
-            // one of the tests have to fail, because you cant guess wrong and right at the same time
-            uint randomNum = uint(keccak256(abi.encodePacked(seedInBytes[i*interval], block.timestamp)));
+            uint randomNum = uint(keccak256(abi.encode(stringInBytes[i*interval], block.timestamp)));
             // TODO: if the result is an even unsigned integer, record it as 1 in the results array, otherwise record it as zero
             if (randomNum % 2 == 0){
                 flips[i] = 1;

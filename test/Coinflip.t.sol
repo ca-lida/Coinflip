@@ -30,8 +30,6 @@ contract CoinflipTest is Test {
     function test_UserCorrect() public {
         assertEq(game.userInput([1,0,0,0,1,1,1,1,0,1]), true);
     }
-    // encode and encode in userinput packed generate 2 different hashes, one causes usercorrect to fail, the other causes userincorrect to fail
-    // one of the tests have to fail, because you cant guess wrong and right at the same time
     
     //////////////////////////////////
     ////   User guesses wrongly   ////
